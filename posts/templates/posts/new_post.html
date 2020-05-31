@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}
+    {% if edit %}
+        Редактирование записи
+    {% elif delete %}
+        Удаление записи
+    {% else %}
+        Создание новой записи
+    {% endif %}
+{% endblock %}
+{% block content %}
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 p-5">
+            <div class="card">
+                <div class="card-header">
+                    {% if edit %}
+                        Редактирование записи
+                    {% elif delete%}
+                        Удаление записи
+                    {% else %}
+                        Создание новой записи
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data"
+                        {% if edit %}
+                            action="{% url "post_edit" author post.id %}"
+                        {% elif delete%}
+                            action="{% url "post_delete" author post.id %}"
+                        {% else %}
+                            action="{% url "new_post" %}"
+                        {% endif %}>
+
+                        {% csrf_token %}
+
+                        {% for field in form %}
+                            <div class="form-group row" aria-required=
+                                {% if field.required %}"true"
+                                {% else %}"false"
+                                {% endif %}>
+                                <label for="{{ field.id_for_label }}" class="col-md-4 col-form-label text-md-right">
+                                    {{ field.label }}
+                                    {% if field.required %}
+                                        <span class="required">*</span>
+                                    {% endif %}
+                                </label>
+                                <div class="col-md-6">
+                                    {{ field }}
+                                    {% if field.help_text %}
+                                        <small id="{{ field.id_for_label }}-help" class="form-text text-muted">{{ field.help_text|safe }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                        <div class="col-md-6 offset-md-4">
+                            <button type="submit" class="btn btn-info">
+                                {% if edit %}
+                                    Редактирование записи
+                                {% elif delete%}
+                                    Удалить запись
+                                {% else %}
+                                    Создание новой записи
+                                {% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
