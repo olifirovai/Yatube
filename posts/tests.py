@@ -157,7 +157,7 @@ class TestScriptsImageMethods(TestCase):
         self.client.post(edit_page, {"text": self.post.text, "image": img,
                                      "group": self.group.id}, follow=True)
 
-    def test_image_in_on_post(self):
+    def test_teg_img_is_on_post(self):
         post_page = reverse("post", kwargs={"username": self.user.username,
                                             "post_id": self.post.id})
         response = self.client.get(post_page, follow=True)

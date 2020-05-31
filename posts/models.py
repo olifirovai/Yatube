@@ -43,3 +43,6 @@ class Follow(models.Model):
                                related_name="following")
     created = models.DateTimeField("beginning_following_date",
                                    auto_now_add=True, db_index=True)
+
+    def __str__(self):
+        return f"follower - {self.user} following - {self.author}"
