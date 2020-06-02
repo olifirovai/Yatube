@@ -130,16 +130,11 @@ def add_comment(request, username, post_id):
 @login_required
 def follow_index(request):
     author_list = Follow.objects.filter(user=request.user).all()
-    # for num in range(author_list.count()):
-    #     post_list = Post.objects.filter(
-    #         author__exact=author_list[num].author).order_by("-pub_date")
     author_names_list = []
     for author_name in author_list:
         author_names_list.append(author_name.author)
-
     post_list = Post.objects.filter(
         author__in=author_names_list).order_by("-pub_date")
-    # post_list += posts_following_author
     paginator = Paginator(post_list, 10)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
