@@ -17,28 +17,43 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">
                             <div class="h6 text-muted">
-                                Подписчиков: {{ author.following.count }} <br />
+                                Подписчиков: {{ author.following.count }} <br/>
                                 Подписан: {{ user.following.count }}
                             </div>
                         </li>
                         <li class="list-group-item">
                             <div class="h6 text-muted">
-                                Записей: {{ posts_number }}
+                                Записей: {{ author.author_posts.count }}
                             </div>
-                        </li>
-                        <li class="list-group-item">
+                        {% if request.user != author %}
                             {% if follow %}
-                                <a class="btn btn-lg btn-light"
-                                    href="{% url 'profile_unfollow' profile.username %}" role="button">
-                                    Отписаться
-                                </a>
-                            {% else %}
-                                <a class="btn btn-lg btn-primary"
-                                    href="{% url 'profile_follow' profile.username %}" role="button">
-                                    Подписаться
-                                </a>
+                                <li class="list-group-item">
+                                    <div class="h6 text-muted">
+                                        Дата подписки: Пока еще не придумала как вывести=(
+                                    </div>
+                                </li>
                             {% endif %}
-                        </li>
+                        {% endif %}
+                        {% if request.user.is_authenticated %}
+                            </li>
+                            {% if request.user != author %}
+                                <li class="list-group-item">
+                                    {% if follow %}
+                                        <a class="btn btn-lg btn-light"
+                                           href="{% url 'profile_unfollow' author.username %}"
+                                           role="button">
+                                            Отписаться
+                                        </a>
+                                    {% else %}
+                                        <a class="btn btn-lg btn-primary"
+                                           href="{% url 'profile_follow' author.username %}"
+                                           role="button">
+                                            Подписаться
+                                        </a>
+                                    {% endif %}
+                                </li>
+                            {% endif %}
+                        {% endif %}
                     </ul>
                 </div>
             </div>
@@ -49,7 +64,7 @@
                 {% endfor %}
 
                 {% if page.has_other_pages %}
-                    {% include "paginator.html" with items=page paginator=paginator%}
+                    {% include "paginator.html" with items=page paginator=paginator %}
                 {% endif %}
             </div>
         </div>

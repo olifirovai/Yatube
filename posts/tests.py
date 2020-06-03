@@ -1,10 +1,11 @@
 import time
 
+from django.core.cache import cache
 from django.test import TestCase
 from django.urls import reverse
 
-from .models import User, Post, Group
-from django.core.cache import cache
+from .models import User, Post, Group, Follow
+
 
 class TestScriptsUserMethods(TestCase):
     def setUp(self):
@@ -213,3 +214,79 @@ class TestScriptsCacheMethods(TestCase):
         time.sleep(21)
         response_index = self.client.get(reverse("index"))
         self.assertContains(response_index, new_text)
+
+
+class TestScriptsCommentsMethods(TestCase):
+    def setUp(self):
+        self.author = User.objects.create_user(username="neymar",
+                                               password="neymarpassword")
+        self.commentator = User.objects.create_user(username="utkin",
+                                                    password="utkinpassword")
+        self.post = Post.objects.create(
+            text="Stay creative and motivated, even with social distancing.",
+            author=self.author)
+
+    def test_authorised_user_can_comment(self):
+        self.client.force_login(self.commentator)
+        comment = ("Падение Неймара – это всегда красиво."
+                   " Даже Плющенко так красиво не падает.")
+        add_comment = reverse("add_comment",
+                              kwargs={"username": self.author.username,
+                                      "post_id": self.post.id})
+        response = self.client.post(add_comment, {"text": comment},
+                                    follow=True)
+        self.assertContains(response, comment)
+
+    def test_anonymous_cant_comment(self):
+        add_comment = reverse("add_comment",
+                              kwargs={"username": self.author.username,
+                                      "post_id": self.post.id})
+        response = self.client.post(add_comment,
+                                    {"text": "You are playing like a goat"})
+        response_right = (f"/auth/login/?next=/{self.author.username}"
+                          f"/{self.post.id}/comment/")
+        self.assertRedirects(response, response_right,
+                             status_code=302, target_status_code=200)
+
+
+class TestScriptsFollowMethods(TestCase):
+    def setUp(self):
+        self.author = User.objects.create_user(username="pushkin",
+                                               password="pushkinpassword")
+        self.follower = User.objects.create_user(
+            username="kyuhelbekerpassword",
+            password="kyuhelbeker")
+        self.user = User.objects.create_user(username="pushchin",
+                                             password="pushchinpassword")
+        self.post = Post.objects.create(
+            text="Cold frost and sunshine: day of wonder!", author=self.author)
+        self.follow = Follow.objects.create(user=self.follower,
+                                            author=self.author)
+
+    def test_authorised_user_can_subscribe(self):
+        self.client.force_login(self.user)
+        follow_page = reverse("profile_follow",
+                              kwargs={"username": self.author.username})
+        self.client.post(follow_page, follow=True)
+        has_follower = Follow.objects.filter(author=self.author,
+                                             user=self.user).exists()
+        self.assertTrue(has_follower)
+
+    def test_authorised_user_can_unsubscribe(self):
+        self.client.force_login(self.follower)
+        unfollow_page = reverse("profile_unfollow",
+                                kwargs={"username": self.author.username})
+        self.client.post(unfollow_page, follow=True)
+        no_follower = Follow.objects.filter(author=self.author,
+                                            user=self.follower).exists()
+        self.assertFalse(no_follower)
+
+    def test_author_post_is_on_follower_page(self):
+        self.client.force_login(self.follower)
+        response = self.client.get(reverse("follow_index"))
+        self.assertContains(response, self.post.text)
+
+    def test_author_post_is_not_on_user_page(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("follow_index"))
+        self.assertNotContains(response, self.post.text)

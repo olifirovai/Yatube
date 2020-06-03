@@ -44,12 +44,15 @@ def new_post(request):
 def profile(request, username):
     author = get_object_or_404(User, username=username)
     posts = author.author_posts.filter(author=author).order_by("-pub_date")
+    follow = None
+    if request.user.is_authenticated:
+        follow = Follow.objects.filter(user=request.user,
+                                       author=author).exists()
     paginator = Paginator(posts, 10)
-    posts_number = posts.count()
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
     data = {"author": author, "paginator": paginator,
-            "page": page, "posts_number": posts_number}
+            "page": page, "follow": follow}
     return render(request, "posts/profile.html", data)
 
 
@@ -146,10 +149,8 @@ def follow_index(request):
 def profile_follow(request, username):
     author = get_object_or_404(User, username=username)
     follow = Follow.objects.filter(user=request.user, author=author).exists()
-    if follow:
-        return redirect("profile", username=author)
-    else:
-        if request.user != author:
+    if request.user != author:
+        if not follow:
             Follow.objects.create(user=request.user, author=author)
     return redirect("profile", username=author)
 
@@ -159,5 +160,5 @@ def profile_unfollow(request, username):
     author = get_object_or_404(User, username=username)
     follow = Follow.objects.filter(user=request.user, author=author).exists()
     if follow:
-        Follow.objects.create(user=request.user, author=author).delete()
+        Follow.objects.filter(user=request.user, author=author).delete()
     return redirect("profile", username=author)
