@@ -17,13 +17,13 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">
                             <div class="h6 text-muted">
-                                Подписчиков: XXX <br />
-                                Подписан: XXX
+                                Подписчиков: {{ author.following.count }} <br />
+                                Подписан: {{ user.following.count }}
                             </div>
                         </li>
                         <li class="list-group-item">
                             <div class="h6 text-muted">
-                                Записей: {{ posts_number }}
+                                Записей: {{ author.author_posts.count }}
                             </div>
                         </li>
                     </ul>
@@ -32,11 +32,6 @@
 
             <div class="col-md-9">
                 {% include "posts/post_item.html" with post=post %}
-                {% with comments.count as total_comments %}
-                    <h6>
-                        У записи {{ total_comments }} комментарий
-                    </h6>
-                {% endwith %}
                 {% include "posts/comments.html" with comment=comment %}
             </div>
         </div>

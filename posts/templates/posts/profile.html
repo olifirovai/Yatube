@@ -29,7 +29,7 @@
                             {% if follow %}
                                 <li class="list-group-item">
                                     <div class="h6 text-muted">
-                                        Дата подписки: Пока еще не придумала как вывести=(
+                                        Дата подписки: {{ follow_date }}
                                     </div>
                                 </li>
                             {% endif %}
@@ -40,13 +40,13 @@
                                 <li class="list-group-item">
                                     {% if follow %}
                                         <a class="btn btn-lg btn-light"
-                                           href="{% url 'profile_unfollow' author.username %}"
+                                           href="{% url "profile_unfollow" author.username %}"
                                            role="button">
                                             Отписаться
                                         </a>
                                     {% else %}
                                         <a class="btn btn-lg btn-primary"
-                                           href="{% url 'profile_follow' author.username %}"
+                                           href="{% url "profile_follow" author.username %}"
                                            role="button">
                                             Подписаться
                                         </a>

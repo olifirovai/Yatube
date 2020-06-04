@@ -1,9 +1,7 @@
 {% extends "base.html" %}
 {% block title %}
     {% if edit %}
-        Редактирование записи
-    {% elif delete %}
-        Удаление записи
+        Редактирование записи {{ post.title }}
     {% else %}
         Создание новой записи
     {% endif %}
@@ -16,8 +14,6 @@
                 <div class="card-header">
                     {% if edit %}
                         Редактирование записи
-                    {% elif delete%}
-                        Удаление записи
                     {% else %}
                         Создание новой записи
                     {% endif %}
@@ -26,8 +22,6 @@
                     <form method="post" enctype="multipart/form-data"
                         {% if edit %}
                             action="{% url "post_edit" author post.id %}"
-                        {% elif delete%}
-                            action="{% url "post_delete" author post.id %}"
                         {% else %}
                             action="{% url "new_post" %}"
                         {% endif %}>
@@ -58,8 +52,6 @@
                             <button type="submit" class="btn btn-info">
                                 {% if edit %}
                                     Редактирование записи
-                                {% elif delete%}
-                                    Удалить запись
                                 {% else %}
                                     Создание новой записи
                                 {% endif %}

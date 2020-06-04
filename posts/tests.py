@@ -32,8 +32,9 @@ class TestScriptsUserMethods(TestCase):
     def test_anonymous_cant_create_post(self):
         create_post = reverse("new_post")
         response = self.client.get(create_post, follow=True)
-        self.assertRedirects(response, "/auth/login/?next=/new/",
-                             status_code=302, target_status_code=200)
+        right_response = "/auth/login/?next={}".format(create_post)
+        self.assertRedirects(response, right_response, status_code=302,
+                             target_status_code=200)
 
     def test_user_can_edit_post(self):
         text = "Now it looks as though they are here to stay"
@@ -243,8 +244,7 @@ class TestScriptsCommentsMethods(TestCase):
                                       "post_id": self.post.id})
         response = self.client.post(add_comment,
                                     {"text": "You are playing like a goat"})
-        response_right = (f"/auth/login/?next=/{self.author.username}"
-                          f"/{self.post.id}/comment/")
+        response_right = "/auth/login/?next={}".format(add_comment)
         self.assertRedirects(response, response_right,
                              status_code=302, target_status_code=200)
 

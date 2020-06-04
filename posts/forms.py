@@ -7,7 +7,7 @@ from .models import Post, Comment
 class PostForm(ModelForm):
     class Meta:
         model = Post
-        fields = ["text", "group", "image"]
+        fields = ("text", "group", "image")
         labels = {"text": "Текст записи", "group": "Название группы",
                   "image": "Картинка", }
 
@@ -17,5 +17,5 @@ class CommentForm(ModelForm):
 
     class Meta:
         model = Comment
-        fields = ["text", ]
+        fields = ("text", )
         labels = {"author": "Автор комментария", "text": "Текст комментария", }

@@ -9,7 +9,7 @@ from .models import Group, Post, User, Follow
 
 @cache_page(20)
 def index(request):
-    post_list = Post.objects.order_by("-pub_date").all()
+    post_list = Post.objects.all()
     paginator = Paginator(post_list, 10)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
@@ -19,7 +19,7 @@ def index(request):
 
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
-    posts_list = group.group_posts.order_by("-pub_date")
+    posts_list = group.group_posts.all()
     paginator = Paginator(posts_list, 10)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
@@ -43,26 +43,29 @@ def new_post(request):
 
 def profile(request, username):
     author = get_object_or_404(User, username=username)
-    posts = author.author_posts.filter(author=author).order_by("-pub_date")
+    posts = author.author_posts.filter(author=author)
     follow = None
+    follow_date = None
     if request.user.is_authenticated:
         follow = Follow.objects.filter(user=request.user,
                                        author=author).exists()
+        if follow:
+            follow_date = Follow.objects.get(user=request.user,
+                                             author=author).created
     paginator = Paginator(posts, 10)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
     data = {"author": author, "paginator": paginator,
-            "page": page, "follow": follow}
+            "page": page, "follow": follow, "follow_date": follow_date}
     return render(request, "posts/profile.html", data)
 
 
 def post_view(request, username, post_id):
     author = get_object_or_404(User, username=username)
     post = get_object_or_404(author.author_posts, id=post_id)
-    posts_number = author.author_posts.filter(author=author).count()
-    comments = post.post_comment.order_by("-created")
-    data = {"author": author, "post": post, "posts_number": posts_number,
-            "comments": comments, "form": CommentForm()}
+    comments = post.post_comment.all()
+    data = {"author": author, "post": post, "comments": comments,
+            "form": CommentForm()}
     return render(request, "posts/post.html", data)
 
 
@@ -75,8 +78,7 @@ def post_edit(request, username, post_id):
                         instance=post)
         if request.method == "POST":
             if form.is_valid():
-                post = form.save(commit=False)
-                post.save()
+                post = form.save()
                 return redirect("post", username=post.author, post_id=post.id)
         else:
             form = PostForm(instance=post)
@@ -92,15 +94,10 @@ def post_delete(request, username, post_id):
     post = get_object_or_404(author.author_posts, id=post_id)
     if request.user == author:
         if request.method == "POST":
-            form = PostForm(request.POST, instance=post)
             post.delete()
             return redirect("profile", username=post.author)
-        else:
-            form = PostForm(instance=post)
-        data = {"form": form, "delete": True, "author": author, "post": post}
-        return render(request, "posts/new_post.html", data)
-    else:
-        return redirect("post", username=author, post_id=post.id)
+        data = {"author": author, "post": post}
+        return render(request, "posts/post_delete.html", data)
 
 
 def page_not_found(request, exception):
@@ -133,11 +130,8 @@ def add_comment(request, username, post_id):
 @login_required
 def follow_index(request):
     author_list = Follow.objects.filter(user=request.user).all()
-    author_names_list = []
-    for author_name in author_list:
-        author_names_list.append(author_name.author)
-    post_list = Post.objects.filter(
-        author__in=author_names_list).order_by("-pub_date")
+    author_names_list = (name.author for name in author_list)
+    post_list = Post.objects.filter(author__in=author_names_list)
     paginator = Paginator(post_list, 10)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
@@ -148,17 +142,13 @@ def follow_index(request):
 @login_required
 def profile_follow(request, username):
     author = get_object_or_404(User, username=username)
-    follow = Follow.objects.filter(user=request.user, author=author).exists()
     if request.user != author:
-        if not follow:
-            Follow.objects.create(user=request.user, author=author)
+        Follow.objects.get_or_create(user=request.user, author=author)
     return redirect("profile", username=author)
 
 
 @login_required
 def profile_unfollow(request, username):
     author = get_object_or_404(User, username=username)
-    follow = Follow.objects.filter(user=request.user, author=author).exists()
-    if follow:
-        Follow.objects.filter(user=request.user, author=author).delete()
+    Follow.objects.filter(user=request.user, author=author).delete()
     return redirect("profile", username=author)

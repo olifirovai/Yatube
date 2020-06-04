@@ -15,14 +15,6 @@
 
     <body>
         {% include "nav.html" %}
-        {% comment %} Это для быстрой навигации при проверки сайта на работоспособность {% endcomment %}
-        <div class="admin-panel">
-            <a href="/admin/" class="btn btn-light">Admin</a>
-            <a href="/new/" class="btn btn-secondary">New post</a>
-            <a href="/auth/password_change/" class="btn btn-light">Change password</a>
-            <a href="/leo/" class="btn btn-secondary">Profile Leo</a>
-            <a href="/Olifirovai/" class="btn btn-light">Profile Olifirova</a>
-        </div>
         <main>
             <div class="container">
                 {% block content %}
