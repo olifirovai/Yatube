@@ -48,10 +48,9 @@ def profile(request, username):
     follow_date = None
     if request.user.is_authenticated:
         follow = Follow.objects.filter(user=request.user,
-                                       author=author).exists()
-        if follow:
-            follow_date = Follow.objects.get(user=request.user,
-                                             author=author).created
+                                       author=author)
+        if follow.exists():
+            follow_date = follow[0].created
     paginator = Paginator(posts, 10)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
@@ -129,9 +128,8 @@ def add_comment(request, username, post_id):
 
 @login_required
 def follow_index(request):
-    author_list = Follow.objects.filter(user=request.user).all()
-    author_names_list = (name.author for name in author_list)
-    post_list = Post.objects.filter(author__in=author_names_list)
+    author_list = request.user.follower.values_list("author", flat=True)
+    post_list = Post.objects.filter(author__in=author_list)
     paginator = Paginator(post_list, 10)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
