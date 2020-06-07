@@ -55,8 +55,8 @@
                                href="{% url "delete_like" post.author.username post.id %}"
                                role="button">
                                 &#9829;
-                                {% if likes.count > 0 %}
-                                    {{ likes.count }}
+                                {% if post.liked_post.count > 0 %}
+                                    {{ post.liked_post.count }}
                                 {% endif %}
                             </a>
                         {% else %}
@@ -64,8 +64,8 @@
                                href="{% url "add_like" post.author.username post.id %}"
                                role="button">
                                 &#x2661;
-                                {% if likes.count > 0 %}
-                                    {{ likes.count }}
+                                {% if post.liked_post.count > 0 %}
+                                    {{ post.liked_post.count }}
                                 {% endif %}
                             </a>
                         {% endif %}

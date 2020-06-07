@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_page
-
+from django.http import HttpResponseRedirect
 from .forms import PostForm, CommentForm
 from .models import Group, Post, User, Follow, Like
 
@@ -65,10 +65,9 @@ def post_view(request, username, post_id):
     author = get_object_or_404(User, username=username)
     post = get_object_or_404(author.author_posts, id=post_id)
     comments = post.post_comment.all()
-    likes = post.liked_post.all()
     like = Like.objects.filter(user=request.user, post=post).exists()
     data = {"author": author, "post": post, "comments": comments,
-            "form": CommentForm(), "likes": likes, "like": like}
+            "form": CommentForm(), "like": like}
     return render(request, "posts/post.html", data)
 
 
@@ -162,7 +161,7 @@ def add_like(request, username, post_id):
     post = get_object_or_404(author.author_posts, id=post_id)
     if request.user != author:
         Like.objects.get_or_create(user=request.user, post=post)
-    return redirect("post", username=author, post_id=post.id)
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 
 @login_required
@@ -170,4 +169,4 @@ def delete_like(request, username, post_id):
     author = get_object_or_404(User, username=username)
     post = get_object_or_404(author.author_posts, id=post_id)
     Like.objects.filter(user=request.user, post=post).delete()
-    return redirect("post", username=author, post_id=post.id)
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
