@@ -52,7 +52,7 @@
                     <p class="card-text">
                         {% if like %}
                             <a class="btn btn-lg btn-light"
-                               href="{% url "delete_like" author.username post.id %}"
+                               href="{% url "delete_like" post.author.username post.id %}"
                                role="button">
                                 &#9829;
                                 {% if likes.count > 0 %}
@@ -61,7 +61,7 @@
                             </a>
                         {% else %}
                             <a class="btn btn-lg btn-light"
-                               href="{% url "add_like" author.username post.id %}"
+                               href="{% url "add_like" post.author.username post.id %}"
                                role="button">
                                 &#x2661;
                                 {% if likes.count > 0 %}
