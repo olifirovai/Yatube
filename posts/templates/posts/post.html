@@ -32,6 +32,30 @@
 
             <div class="col-md-9">
                 {% include "posts/post_item.html" with post=post %}
+{#                <div class="d-flex justify-content-between align-items-left">#}
+{#                    <p class="card-text">#}
+{#                        {% if like %}#}
+{#                            <a class="btn btn-lg btn-light"#}
+{#                               href="{% url "delete_like" author.username post.id %}"#}
+{#                               role="button">#}
+{#                                &#9829;#}
+{#                                {% if likes.count > 0 %}#}
+{#                                    {{ likes.count }}#}
+{#                                {% endif %}#}
+{#                            </a>#}
+{#                        {% else %}#}
+{#                            <a class="btn btn-lg btn-light"#}
+{#                               href="{% url "add_like" author.username post.id %}"#}
+{#                               role="button">#}
+{#                                &#x2661;#}
+{#                                {% if likes.count > 0 %}#}
+{#                                    {{ likes.count }}#}
+{#                                {% endif %}#}
+{#                            </a>#}
+{#                        {% endif %}#}
+{##}
+{#                    </p>#}
+{#                </div>#}
                 {% include "posts/comments.html" with comment=comment %}
             </div>
         </div>

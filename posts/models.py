@@ -52,3 +52,19 @@ class Follow(models.Model):
 
     def __str__(self):
         return f"follower - {self.user} following - {self.author} date - {self.created}"
+
+
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE,
+                             related_name="liker")
+    post = models.ForeignKey(Post, on_delete=models.CASCADE,
+                               related_name="liked_post")
+    created = models.DateTimeField("like_date",
+                                   auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ("-created",)
+
+    def __str__(self):
+        return f"liker - {self.user} liked post - {self.post} like's date - {self.created}"
+

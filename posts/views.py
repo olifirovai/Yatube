@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_page
 
 from .forms import PostForm, CommentForm
-from .models import Group, Post, User, Follow
+from .models import Group, Post, User, Follow, Like
 
 
 @cache_page(20)
@@ -13,6 +13,7 @@ def index(request):
     paginator = Paginator(post_list, 10)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
+
     data = {"page": page, "paginator": paginator}
     return render(request, "index.html", data)
 
@@ -64,8 +65,10 @@ def post_view(request, username, post_id):
     author = get_object_or_404(User, username=username)
     post = get_object_or_404(author.author_posts, id=post_id)
     comments = post.post_comment.all()
+    likes = post.liked_post.all()
+    like = Like.objects.filter(user=request.user, post=post).exists()
     data = {"author": author, "post": post, "comments": comments,
-            "form": CommentForm()}
+            "form": CommentForm(), "likes": likes, "like": like}
     return render(request, "posts/post.html", data)
 
 
@@ -112,7 +115,6 @@ def server_error(request):
 def add_comment(request, username, post_id):
     author = get_object_or_404(User, username=username)
     post = get_object_or_404(author.author_posts, id=post_id)
-    comments = post.post_comment.all()
     if request.method == "POST":
         form = CommentForm(request.POST)
         if form.is_valid():
@@ -124,7 +126,7 @@ def add_comment(request, username, post_id):
     else:
         form = CommentForm()
     return render(request, "posts/comments.html",
-                  {"form": form, "comments": comments, "post": post})
+                  {"form": form, "post": post})
 
 
 @login_required
@@ -152,3 +154,20 @@ def profile_unfollow(request, username):
     author = get_object_or_404(User, username=username)
     Follow.objects.filter(user=request.user, author=author).delete()
     return redirect("profile", username=author)
+
+
+@login_required
+def add_like(request, username, post_id):
+    author = get_object_or_404(User, username=username)
+    post = get_object_or_404(author.author_posts, id=post_id)
+    if request.user != author:
+        Like.objects.get_or_create(user=request.user, post=post)
+    return redirect("post", username=author, post_id=post.id)
+
+
+@login_required
+def delete_like(request, username, post_id):
+    author = get_object_or_404(User, username=username)
+    post = get_object_or_404(author.author_posts, id=post_id)
+    Like.objects.filter(user=request.user, post=post).delete()
+    return redirect("post", username=author, post_id=post.id)
