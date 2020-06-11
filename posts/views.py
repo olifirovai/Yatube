@@ -65,7 +65,9 @@ def post_view(request, username, post_id):
     author = get_object_or_404(User, username=username)
     post = get_object_or_404(author.author_posts, id=post_id)
     comments = post.post_comment.all()
-    like = Like.objects.filter(user=request.user, post=post).exists()
+    like = None
+    if request.user.is_authenticated:
+        like = Like.objects.filter(user=request.user, post=post).exists()
     data = {"author": author, "post": post, "comments": comments,
             "form": CommentForm(), "like": like}
     return render(request, "posts/post.html", data)
