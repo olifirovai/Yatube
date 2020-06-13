@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_page
-from django.http import HttpResponseRedirect
+
 from .forms import PostForm, CommentForm
 from .models import Group, Post, User, Follow, Like
 
@@ -45,14 +46,10 @@ def new_post(request):
 def profile(request, username):
     author = get_object_or_404(User, username=username)
     posts = author.author_posts.filter(author=author)
-    follow = None
-    follow_date = None
-    if request.user.is_authenticated:
-        follow = Follow.objects.filter(user=request.user,
-                                       author=author).exists()
-        if follow:
-            follow_date = Follow.objects.get(user=request.user,
-                                             author=author).created
+    follow = Follow.objects.get_follow(author,
+        request.user) if request.user.is_authenticated else None
+    follow_date = Follow.objects.get(user=request.user,
+                                     author=author).created if follow.__bool__() else None
     paginator = Paginator(posts, 10)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
@@ -132,9 +129,7 @@ def add_comment(request, username, post_id):
 
 @login_required
 def follow_index(request):
-    author_list = Follow.objects.filter(user=request.user).all()
-    author_names_list = (name.author for name in author_list)
-    post_list = Post.objects.filter(author__in=author_names_list)
+    post_list = Post.objects.get_following_posts(request.user)
     paginator = Paginator(post_list, 10)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
@@ -153,7 +148,7 @@ def profile_follow(request, username):
 @login_required
 def profile_unfollow(request, username):
     author = get_object_or_404(User, username=username)
-    Follow.objects.filter(user=request.user, author=author).delete()
+    Follow.objects.get_follow(author, request.user).delete()
     return redirect("profile", username=author)
 
 
