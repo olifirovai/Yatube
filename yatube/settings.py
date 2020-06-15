@@ -14,6 +14,8 @@ ALLOWED_HOSTS = [
     "[::1]",
     "testserver",
     "*",
+    "ec2-13-53-201-186.eu-north-1.compute.amazonaws.com",
+    "0.0.0.0",
 ]
 
 INSTALLED_APPS = [
