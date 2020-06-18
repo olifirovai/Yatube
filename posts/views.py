@@ -14,7 +14,6 @@ def index(request):
     paginator = Paginator(post_list, 10)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
-
     data = {"page": page, "paginator": paginator}
     return render(request, "index.html", data)
 
@@ -47,7 +46,7 @@ def profile(request, username):
     author = get_object_or_404(User, username=username)
     posts = author.author_posts.filter(author=author)
     follow = Follow.objects.get_follow(author,
-        request.user) if request.user.is_authenticated else None
+                                       request.user) if request.user.is_authenticated else None
     follow_date = Follow.objects.get(user=request.user,
                                      author=author).created if follow.__bool__() else None
     paginator = Paginator(posts, 10)
@@ -62,9 +61,8 @@ def post_view(request, username, post_id):
     author = get_object_or_404(User, username=username)
     post = get_object_or_404(author.author_posts, id=post_id)
     comments = post.post_comment.all()
-    like = None
-    if request.user.is_authenticated:
-        like = Like.objects.filter(user=request.user, post=post).exists()
+    like = Like.objects.filter(user=request.user,
+                               post=post).exists() if request.user.is_authenticated else None
     data = {"author": author, "post": post, "comments": comments,
             "form": CommentForm(), "like": like}
     return render(request, "posts/post.html", data)
