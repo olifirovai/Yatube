@@ -254,8 +254,8 @@ class TestScriptsFollowMethods(TestCase):
         self.author = User.objects.create_user(username="pushkin",
                                                password="pushkinpassword")
         self.follower = User.objects.create_user(
-            username="kyuhelbekerpassword",
-            password="kyuhelbeker")
+            username="kyuhelbeker",
+            password="kyuhelbekerpassword")
         self.user = User.objects.create_user(username="pushchin",
                                              password="pushchinpassword")
         self.post = Post.objects.create(
@@ -290,3 +290,5 @@ class TestScriptsFollowMethods(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(reverse("follow_index"))
         self.assertNotContains(response, self.post.text)
+
+
