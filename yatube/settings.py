@@ -14,6 +14,8 @@ ALLOWED_HOSTS = [
     "[::1]",
     "testserver",
     "*",
+    "ec2-13-53-201-186.eu-north-1.compute.amazonaws.com",
+    "0.0.0.0",
 ]
 
 INSTALLED_APPS = [
@@ -28,7 +30,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "sorl.thumbnail",
-    "debug_toolbar",
 ]
 
 SITE_ID = 2
@@ -41,7 +42,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = "yatube.urls"
@@ -101,6 +101,10 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+STATICFILES_DIRS = (
+    "C:/Yandex/hw05_final/static/",
+)
 
 MEDIA_URL = "/media/"
 
