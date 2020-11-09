@@ -147,7 +147,7 @@ class TestScriptsImageMethods(TestCase):
         self.post = Post.objects.create(text="The Birth of Venus",
                                         author=self.user)
         self.client.force_login(self.user)
-        img = open("media/posts/La_nascita_di_Venere.jpg", "rb")
+        img = open("test_media/posts/Test_picture.png", "rb")
         edit_page = reverse("post_edit",
                             kwargs={"username": self.user.username,
                                     "post_id": self.post.id})
@@ -182,7 +182,7 @@ class TestScriptsImageMethods(TestCase):
 
     def test_upload_only_image_format(self):
         self.client.force_login(self.user)
-        non_image = open("media/posts/La_nascita_di_Venere.docx", "rb")
+        non_image = open("test_media/posts/Test_picture.txt", "rb")
         edit_page = reverse("post_edit",
                             kwargs={"username": self.user.username,
                                     "post_id": self.post.id})
@@ -209,10 +209,10 @@ class TestScriptsCacheMethods(TestCase):
                             kwargs={"username": self.user.username,
                                     "post_id": self.post.id})
         self.client.post(page_edit, {"text": new_text}, follow=True)
-        time.sleep(19)
+        time.sleep(9)
         response_index_cache = self.client.get(reverse("index"))
         self.assertContains(response_index_cache, text)
-        time.sleep(21)
+        time.sleep(11)
         response_index = self.client.get(reverse("index"))
         self.assertContains(response_index, new_text)
 
@@ -290,5 +290,3 @@ class TestScriptsFollowMethods(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(reverse("follow_index"))
         self.assertNotContains(response, self.post.text)
-
-
