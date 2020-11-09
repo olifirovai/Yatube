@@ -1,25 +1,25 @@
 {% extends "base.html" %}
-{% block title %}Удаление записи {{ post.title }}{% endblock %}
+{% block title %}Delete Post {{ post.title }}{% endblock %}
 {% block content %}
 
     <div class="row justify-content-center">
         <div class="col-md-8 p-5">
             <div class="card">
                 <div class="card-header">
-                    Удаление записи
+                    Delete Post
                 </div>
                 <div class="card-body">
                     <form method="post" action="{% url "post_delete" author post.id %}">
                         {% csrf_token %}
-                            <h4>Вы уверены, что хотите удалить пост?</h4>
+                            <h4>Are you sure you want to delete this post?</h4>
                             <h8> {{ post.text|linebreaks }} </h8>
 
                             <a class="btn btn-info justify-content-center"
                                href="{% url "post" author post.id %}"
                                role="button">
-                                Я передумал
+                                Cancel
                             </a>
-                            <button type="submit" class="btn btn-danger" >Удалить пост</button>
+                            <button type="submit" class="btn btn-danger" >Remove Post</button>
                     </form>
                 </div>
             </div>

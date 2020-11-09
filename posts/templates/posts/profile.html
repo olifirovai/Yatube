@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Профиль пользователя {{ author }}{% endblock %}
+{% block title %}{{ author }} Profile{% endblock %}
 {% load thumbnail %}
 {% block content %}
     <main role="main" class="container">
@@ -17,19 +17,19 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">
                             <div class="h6 text-muted">
-                                Подписчиков: {{ author.following.count }} <br/>
-                                Подписан: {{ author.follower.count }}
+                                Followers: {{ author.following.count }} <br/>
+                                Followings: {{ author.follower.count }}
                             </div>
                         </li>
                         <li class="list-group-item">
                             <div class="h6 text-muted">
-                                Записей: {{ author.author_posts.count }}
+                                Posts: {{ author.author_posts.count }}
                             </div>
                         {% if request.user != author %}
                             {% if follow %}
                                 <li class="list-group-item">
                                     <div class="h6 text-muted">
-                                        Дата подписки: {{ follow_date }}
+                                        Start date of follow: {{ follow_date }}
                                     </div>
                                 </li>
                             {% endif %}
@@ -42,13 +42,13 @@
                                         <a class="btn btn-lg btn-light"
                                            href="{% url "profile_unfollow" author.username %}"
                                            role="button">
-                                            Отписаться
+                                            Unfollow
                                         </a>
                                     {% else %}
                                         <a class="btn btn-lg btn-primary"
                                            href="{% url "profile_follow" author.username %}"
                                            role="button">
-                                            Подписаться
+                                            Follow
                                         </a>
                                     {% endif %}
                                 </li>

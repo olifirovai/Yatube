@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block title %}
     {% if edit %}
-        Редактирование записи {{ post.title }}
+        Edit Post {{ post.title }}
     {% else %}
-        Создание новой записи
+        Create Post
     {% endif %}
 {% endblock %}
 {% block content %}
@@ -13,9 +13,9 @@
             <div class="card">
                 <div class="card-header">
                     {% if edit %}
-                        Редактирование записи
+                        Edit Post
                     {% else %}
-                        Создание новой записи
+                        Create Post
                     {% endif %}
                 </div>
                 <div class="card-body">
@@ -51,9 +51,9 @@
                         <div class="col-md-6 offset-md-4">
                             <button type="submit" class="btn btn-info">
                                 {% if edit %}
-                                    Редактирование записи
+                                    Edit Post
                                 {% else %}
-                                    Создание новой записи
+                                    Create Post
                                 {% endif %}
                             </button>
                         </div>

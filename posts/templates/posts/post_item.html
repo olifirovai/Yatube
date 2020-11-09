@@ -1,13 +1,13 @@
 <div class="card mb-3 mt-1 shadow-sm">
-    <!-- Отображение картинки -->
+
     {% load thumbnail %}
     {% thumbnail post.image "960x339" crop="center" upscale=True as im %}
         <img class="card-img" src="{{ im.url }}"/>
     {% endthumbnail %}
-    <!-- Отображение текста поста -->
+
     <div class="card-body">
         <p class="card-text">
-            <!-- Ссылка на автора через @ -->
+
             <a name="post_{{ post.id }}"
                href="{% url "profile" post.author.username %}">
                 <strong class="d-block text-gray-dark">@{{ post.author }}</strong>
@@ -15,7 +15,6 @@
             {{ post.text|linebreaksbr }}
         </p>
 
-        <!-- Если пост относится к какому-нибудь сообществу, то отобразим ссылку на него через # -->
         {% if post.group %}
             <a class="card-link muted"
                href="{% url "group" post.group.slug %}">
@@ -25,27 +24,26 @@
 
         <div class="d-flex justify-content-between align-items-center">
             <div class="btn-group ">
-        <!-- Отображение ссылки на комментарии -->
+
                 <a class="btn btn-sm text-muted"
                    href="{% url "post" post.author.username post.id %}"
                    role="button">
                     {% if post.post_comment.count %}
-                        {{ post.post_comment.count }} комментариев
+                        {{ post.post_comment.count }} comments
                     {% else %}
-                        Добавить комментарий
+                        Add Comment
                     {% endif %}
                 </a>
 
-                <!-- Ссылка на редактирование поста для автора -->
                 {% if user == post.author %}
                     <a class="btn btn-sm text-muted"
                        href="{% url "post_edit" post.author.username post.id %}"
                        role="button">
-                        Редактировать
+                        Edit
                     </a>
                     <a class="btn btn-sm text-muted"
                        href={% url "post_delete" post.author.username post.id %}
-                               role="button">Удалить пост</a>
+                               role="button">Delete Post</a>
                 {% endif %}
             </div>
                 <div class="d-flex justify-content-between align-items-left">
@@ -72,7 +70,7 @@
 
                     </p>
                 </div>
-            <!-- Дата публикации поста -->
+
             <small class="text-muted">{{ post.pub_date }}</small>
         </div>
     </div>
