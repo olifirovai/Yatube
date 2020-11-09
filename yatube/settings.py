@@ -2,11 +2,9 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "f(!tle-5o54w1!l)^5)m!b_xut+(hgnh47j9st4(q(jqpb=^g%"
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     "localhost",
@@ -14,7 +12,6 @@ ALLOWED_HOSTS = [
     "[::1]",
     "testserver",
     "*",
-    "ec2-13-53-201-186.eu-north-1.compute.amazonaws.com",
     "0.0.0.0",
 ]
 
@@ -88,7 +85,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = "ru"
+LANGUAGE_CODE = "en"
 
 TIME_ZONE = "UTC"
 
@@ -101,10 +98,6 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
-
-STATICFILES_DIRS = (
-    "C:/Yandex/hw05_final/static/",
-)
 
 MEDIA_URL = "/media/"
 

@@ -21,8 +21,6 @@ class PostManager(models.Manager):
         return self.get_queryset().filter(author__following__user=user)
 
 
-
-
 class Post(models.Model):
     text = models.TextField("post_text")
     pub_date = models.DateTimeField("date_published", auto_now_add=True)
@@ -56,6 +54,7 @@ class Comment(models.Model):
 class FollowManager(models.Manager):
     def get_follow(self, author, user):
         return self.get_queryset().filter(author=author, user=user)
+
 
 class Follow(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,
