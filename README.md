@@ -17,9 +17,6 @@ Social network for publishing personal notes and stories. Users can visit the pa
 
 ***Note**: To reset the password, you will use an email, so add your email when sign up.*
 
-## The web-page of the project
-https://olifirova.ga/
-
 ## Technologies
 * [Python](https://www.python.org/)
 * [Django 2.2](https://www.djangoproject.com/)
